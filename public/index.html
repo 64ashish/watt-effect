@@ -85,7 +85,7 @@
           <div>
             <label class="text-xs mb-3.5 text-gray-600">VÄLJ EFFEKTGRUPP:</label>
             <div class="py-3.5">
-              <select x-model="selectedType" @change="filterAndFetchProductOption()">
+              <select x-model="selectedType" @change="filterAndFetchProductOption(type)">
                   <option value="">Select</option>
                   <template x-for="type in types">
                   <option x-text:="type" :value="type"></option>
@@ -96,7 +96,7 @@
           <div>
             <label class="text-xs mb-3.5 text-gray-600">VÄLJ HÖJD:</label>
             <div class="py-3.5">
-              <select x-model="selectedHeight" @change="filterAndFetchProductOption()">
+              <select x-model="selectedHeight" @change="filterAndFetchProductOption(height)">
                   <option value="">Select</option>
                   <template x-for="height in heights">
                   <option x-text:="height" :value="height"></option>
@@ -107,7 +107,7 @@
           <div>
             <label class="text-xs mb-3.5 text-gray-600">VÄLJ LÄNGD:</label>
             <div class="py-3.5">
-              <select x-model="selectedLength" @change="filterAndFetchProductOption()">
+              <select x-model="selectedLength" @change="filterAndFetchProductOption(length)">
                   <option value="">Select</option>
                   <template x-for="length in lengths">
                   <option x-text:="length" :value="length"></option>
@@ -187,7 +187,7 @@
         //           .then(response => response.json())
         //           .then(data => this.products = data);
         // },
-        async filterAndFetchProductOption()
+        async filterAndFetchProductOption(currentOption)
         {
           let options = {
             type:this.selectedType,
@@ -223,8 +223,23 @@
           //           }
           //         })
            let productOptions =  await this.fetchProductInfo(fetchURL);
-              this.heights = productOptions.availableHeights
+          if(currentOption === "height")
+          {
+              // this.heights = productOptions.availableHeights
               this.lengths = productOptions.availableLengths
+          }
+            if(currentOption === "length")
+                {
+                    this.heights = productOptions.availableHeights
+                    // this.lengths = productOptions.availableLengths
+                }
+            if(currentOption === "type")
+            {
+                this.lengths = productOptions.availableLengths
+                this.heights = productOptions.availableHeights
+            }
+
+              // this.lengths = productOptions.availableLengths
               this.connectionPlacement = productOptions.availableConnectionPlacements
               this.showOptions = true
 
