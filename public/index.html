@@ -1,0 +1,298 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="/public/css/style.css" rel="stylesheet">
+</head>
+<body>
+  <div x-data="dropdown()">
+    <div class="flex items-center justify-center h-screen max-w-7xl m-auto">
+      <div class="w-1/2">
+          <!-- effect or behov -->
+        <div class="flex gap-5 items-center">
+          <div class="border-2 border-gray-900 text-gray-900 py-3 px-6 text-lg rounded-3xl text-center w-56
+           hover:border-sky-600 hover:bg-sky-600 hover:text-white hover:underline">Effekt</div>
+          <div class="border-2 border-gray-900 text-gray-900 py-3 px-6 text-lg rounded-3xl text-center w-56
+           hover:border-sky-600 hover:bg-sky-600 hover:text-white hover:underline">Behov</div>
+          <div>NOLLSTÄLL</div>
+        </div>
+          <!-- temperature -->
+        <div class="my-3.5 flex gap-5">
+          <div>
+            <label class="text-xs mb-3.5 text-gray-600">FRAMLEDNING °C</label>
+            <div class="py-3.5">
+<!--              <a>+</a>-->
+              <input type="number" value="55" min="25" max-="90"
+              class="border border-gray-300 rounded-3xl text-center py-1">
+<!--              <a>-</a>-->
+            </div>
+          </div>
+          <div>
+            <label class="text-xs mb-3.5 text-gray-600">RETURLEDNING °C</label>
+            <div class="py-3.5">
+              <!--              <a>+</a>-->
+              <input type="number" value="45" min="25" max-="90"
+                     class="border border-gray-300 rounded-3xl text-center py-1">
+              <!--              <a>-</a>-->
+            </div>
+          </div>
+          <div>
+            <label class="text-xs mb-3.5 text-gray-600">RUMSTEMPERATUR °C</label>
+            <div class="py-3.5">
+              <!--              <a>+</a>-->
+              <input type="number" value="20" min="25" max-="90"
+                     class="border border-gray-300 rounded-3xl text-center py-1">
+              <!--              <a>-</a>-->
+            </div>
+          </div>
+        </div>
+          <!-- product group -->
+        <div>
+          <div class="text-sm mb-3.5 text-gray-600">VÄLJ PRODUKTGRUPP</div>
+          <div class="flex items-center gap-5 mb-3.5">
+            <div class="border-2 border-gray-900 text-gray-900 py-2 px-3 text-sm rounded-3xl text-center w-56
+           hover:border-sky-600 hover:bg-sky-600 hover:text-white hover:underline">Radiatorer</div>
+            <div class="border-2 border-gray-900 text-gray-900 py-2 px-3 text-sm rounded-3xl text-center w-56
+           hover:border-sky-600 hover:bg-sky-600 hover:text-white hover:underline">Konvektorer</div>
+            <div class="border-2 border-gray-900 text-gray-900 py-2 px-3 text-sm rounded-3xl text-center w-56
+           hover:border-sky-600 hover:bg-sky-600 hover:text-white hover:underline">Handdukstorkar</div>
+          </div>
+        </div>
+            <!-- product list -->
+        <div >
+          <div class="text-sm mb-3.5 text-gray-600">VÄLJ PRODUKT</div>
+          <div class="mb-3.5 flex flex-col">
+<!--            <input type="text" class=" border border-gray-300 py-1" x-model="search"  :value="productSelected">-->
+<!--            <ul class=" max-h-52 overflow-y-auto">-->
+<!--              <template x-for="product in filteredProduct" :key="index">-->
+<!--                <li class="text-xs"-->
+<!--                    x-text="product" @click="selectedProduct(product)">-->
+<!--                </li>-->
+<!--              </template>-->
+<!--            </ul>-->
+            <select x-model="productSelected" @change="initProductOptions()">
+                <option value="">Select</option>
+                <template x-for="product in filteredProduct">
+                <option x-text:="product.name" :value="product.name"></option>
+              </template>
+            </select>
+          </div>
+        </div>
+        <!-- prooduct options-->
+        <div class="my-3.5 flex gap-5" x-show="productSelected">
+          <div>
+            <label class="text-xs mb-3.5 text-gray-600">VÄLJ EFFEKTGRUPP:</label>
+            <div class="py-3.5">
+              <select x-model="selectedType" @change="filterAndFetchProductOption()">
+                  <option value="">Select</option>
+                  <template x-for="type in types">
+                  <option x-text:="type" :value="type"></option>
+                </template>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs mb-3.5 text-gray-600">VÄLJ HÖJD:</label>
+            <div class="py-3.5">
+              <select x-model="selectedHeight" @change="filterAndFetchProductOption()">
+                  <option value="">Select</option>
+                  <template x-for="height in heights">
+                  <option x-text:="height" :value="height"></option>
+                </template>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs mb-3.5 text-gray-600">VÄLJ LÄNGD:</label>
+            <div class="py-3.5">
+              <select x-model="selectedLength" @change="filterAndFetchProductOption()">
+                  <option value="">Select</option>
+                  <template x-for="length in lengths">
+                  <option x-text:="length" :value="length"></option>
+                </template>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- additional product option-->
+        <div x-show="connectionPlacement.length >= 1">
+              <div class="text-sm mb-3.5 text-gray-600">Connection Placement</div>
+              <div class="mb-3.5 flex flex-col">
+                  <select x-model="selectedConnectionPlacement" @change="filterAndFetchProductOption()">
+                      <option value="">Select</option>
+                      <option value="right">Right</option>
+                      <option value="left">Left</option>
+
+                  </select>
+              </div>
+        </div>
+
+      </div>
+      <div class="w-1/2 flex flex-col items-center">
+        <p>
+          Produktbenämning
+        </p>
+        <div >
+          <div class="w-80 h-80 bg-teal-600 rounded-full">
+              <spam x-text="effectCalculated" x-show="effectCalculated"></spam>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function dropdown()
+    {
+      return {
+        init() {
+          fetch('https://watt.karabin.se/api/product-groups')
+                  .then(response => response.json())
+                  .then(result => this.products = result.data);
+          // console.log(this.products)
+        },
+        showOptions:true,
+        search: '',
+        products:null,
+        types:null,
+        heights:null,
+        lengths:null,
+        connectionPlacement:[],
+        selectedType:null,
+        selectedLength:null,
+        selectedHeight:null,
+        productSelected:null,
+        selectedConnectionPlacement:null,
+        productName:null,
+        productSku:null,
+        effectCalculated:null,
+
+       get filteredProduct() {
+          // return this.products.filter(
+          //     product => product.name.startsWith(this.search.toUpperCase())
+          // )
+         return this.products
+        },
+        // selectedProduct(product)
+        // {
+        //   this.productSelected = product;
+        //   this.fetchProductOption()
+        //
+        // },
+        // fetchProducts() {
+        //   fetch('https://watt.karabin.se/api/product-groups')
+        //           .then(response => response.json())
+        //           .then(data => this.products = data);
+        // },
+        async filterAndFetchProductOption()
+        {
+          let options = {
+            type:this.selectedType,
+            height:this.selectedHeight,
+            length:this.selectedLength,
+            connection_placement:this.selectedConnectionPlacement
+          }
+
+          let query = Object.entries(options)
+                  .filter(([_, value]) => value !== null)
+                  .map(([key, value]) => `filter[${key}]=${encodeURIComponent(value)}`)
+                  .join("&");
+          let fetchURL = "https://watt.karabin.se/api/product-search/"+this.productSelected+'?'+query
+
+          // console.log(baseURL+'?'+query)
+
+          // await fetch(fetchURL)
+          //         .then(response => response.json())
+          //         .then(result => {
+          //           // this.types = result.availableTypes
+          //           this.heights = result.availableHeights
+          //           this.lengths = result.availableLengths
+          //           this.connectionPlacement = result.availableConnectionPlacements
+          //           if(result.productCandidates.length == 1)
+          //           {
+          //             this.productSku = result.productCandidates[0]
+          //
+          //             fetch('https://watt.karabin.se/api/calculate-effect/'+this.productSku)
+          //                     .then(response => response.json())
+          //                     .then(result => {
+          //                       this.effectCalculated = result.totalEffect
+          //                     })
+          //           }
+          //         })
+           let productOptions =  await this.fetchProductInfo(fetchURL);
+              this.heights = productOptions.availableHeights
+              this.lengths = productOptions.availableLengths
+              this.connectionPlacement = productOptions.availableConnectionPlacements
+              this.showOptions = true
+
+
+            if(productOptions.productCandidates.length == 1)
+                  {
+                    this.productSku = productOptions.productCandidates[0]
+
+                   await fetch('https://watt.karabin.se/api/calculate-effect/'+this.productSku)
+                            .then(response => response.json())
+                            .then(result => {
+                              this.effectCalculated = result.totalEffect
+                            })
+                  }
+        },
+
+
+      async initProductOptions()
+      {
+          let fetchURL = "https://watt.karabin.se/api/product-search/"+this.productSelected
+
+         let productInfo = await this.fetchProductInfo(fetchURL);
+
+          this.types = productInfo.availableTypes
+          this.heights = productInfo.availableHeights
+          this.lengths = productInfo.availableLengths
+          this.connectionPlacement = productInfo.availableConnectionPlacements
+          this.effectCalculated = null
+          this.productSku = null
+          this.selectedLength = null
+          this.selectedType = null
+          this.selectedHeight = null
+          this.selectedConnectionPlacement = null
+
+            // let productInfo = await this.fetchProductInfo(fetchURL)
+          // console.log(await fetchProductInfo(fetchURL))
+
+      },
+
+      async fetchProductInfo(fetchURL)
+      {
+          // console.log("this was asynced "+fetchURL)
+          // await fetch(fetchURL)
+          //     .then(response => response.json())
+          //     .then(result => {
+          //         // this.types = result.availableTypes
+          //         this.heights = result.availableHeights
+          //         this.lengths = result.availableLengths
+          //         this.connectionPlacement = result.availableConnectionPlacements
+          //         if(result.productCandidates.length == 1)
+          //         {
+          //             this.productSku = result.productCandidates[0]
+          //
+          //             fetch('https://watt.karabin.se/api/calculate-effect/'+this.productSku)
+          //                 .then(response => response.json())
+          //                 .then(result => {
+          //                     this.effectCalculated = result.totalEffect
+          //                 })
+          //         }
+          //     })
+
+
+          return await fetch(fetchURL)
+              .then(response => response.json())
+          // return allOptions;
+      }
+      }
+    }
+  </script>
+</body>
+</html>
