@@ -85,7 +85,7 @@
           <div>
             <label class="text-xs mb-3.5 text-gray-600">VÄLJ EFFEKTGRUPP:</label>
             <div class="py-3.5">
-              <select x-model="selectedType" @change="filterAndFetchProductOption(type)">
+              <select x-model="selectedType" @change="filterAndFetchProductOption('type')">
                   <option value="">Select</option>
                   <template x-for="type in types">
                   <option x-text:="type" :value="type"></option>
@@ -96,7 +96,7 @@
           <div>
             <label class="text-xs mb-3.5 text-gray-600">VÄLJ HÖJD:</label>
             <div class="py-3.5">
-              <select x-model="selectedHeight" @change="filterAndFetchProductOption(height)">
+              <select x-model="selectedHeight" @change="filterAndFetchProductOption('height')">
                   <option value="">Select</option>
                   <template x-for="height in heights">
                   <option x-text:="height" :value="height"></option>
@@ -107,7 +107,7 @@
           <div>
             <label class="text-xs mb-3.5 text-gray-600">VÄLJ LÄNGD:</label>
             <div class="py-3.5">
-              <select x-model="selectedLength" @change="filterAndFetchProductOption(length)">
+              <select x-model="selectedLength" @change="filterAndFetchProductOption('length')">
                   <option value="">Select</option>
                   <template x-for="length in lengths">
                   <option x-text:="length" :value="length"></option>
@@ -189,6 +189,26 @@
         // },
         async filterAndFetchProductOption(currentOption)
         {
+
+        if(currentOption === "type")
+        {
+            this.effectCalculated = null
+            this.productSku = null
+            this.selectedLength = null
+            // this.selectedType = null
+            this.selectedHeight = null
+            this.selectedConnectionPlacement = null
+        }
+
+            if(currentOption === "height")
+            {
+
+                this.selectedLength = null
+                this.effectCalculated = null
+                this.productSku = null
+            }
+
+
           let options = {
             type:this.selectedType,
             height:this.selectedHeight,
@@ -223,25 +243,42 @@
           //           }
           //         })
            let productOptions =  await this.fetchProductInfo(fetchURL);
-          if(currentOption === "height")
-          {
-              // this.heights = productOptions.availableHeights
-              this.lengths = productOptions.availableLengths
-          }
-            if(currentOption === "length")
-                {
-                    this.heights = productOptions.availableHeights
-                    // this.lengths = productOptions.availableLengths
-                }
-            if(currentOption === "type")
+          // if(currentOption === "height")
+          // {
+          //     // this.heights = productOptions.availableHeights
+          //     this.lengths = productOptions.availableLengths
+          // }
+          //   if(currentOption === "length")
+          //       {
+          //           this.heights = productOptions.availableHeights
+          //           // this.lengths = productOptions.availableLengths
+          //       }
+          //   if(currentOption === "type")
+          //   {
+          //       this.effectCalculated = null
+          //       this.productSku = null
+          //       this.selectedLength = null
+          //       // this.selectedType = null
+          //       this.selectedHeight = null
+          //       this.selectedConnectionPlacement = null
+          //   }
+            if(currentOption === "height")
             {
                 this.lengths = productOptions.availableLengths
-                this.heights = productOptions.availableHeights
+                // this.selectedLength = null
+                this.effectCalculated = null
+                this.productSku = null
             }
 
+            if(currentOption === "length")
+            {
+
+            }
               // this.lengths = productOptions.availableLengths
               this.connectionPlacement = productOptions.availableConnectionPlacements
               this.showOptions = true
+
+
 
 
             if(productOptions.productCandidates.length == 1)
